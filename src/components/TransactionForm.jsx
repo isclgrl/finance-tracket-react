@@ -6,14 +6,11 @@ function TransactionForm({ onAdd, funds }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Efectivo"); 
   const [type, setType] = useState("expense"); 
-  
-  // NUEVOS CAMPOS
-  const [selectedFund, setSelectedFund] = useState(""); // ¿De qué bolsa sale?
-  const [isExecuted, setIsExecuted] = useState(true); // ¿Ya se aplicó en el banco?
+  const [selectedFund, setSelectedFund] = useState("");
+  const [isExecuted, setIsExecuted] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validamos que haya descripción, monto y un fondo seleccionado
     if (!description || !amount || !selectedFund) {
       alert("Por favor llena todos los campos y selecciona un Fondo.");
       return;
@@ -25,21 +22,19 @@ function TransactionForm({ onAdd, funds }) {
       amount: +amount,
       category,
       type,
-      fundId: Number(selectedFund), // Guardamos el ID del fondo
-      isExecuted, // Guardamos si ya se aplicó
+      fundId: Number(selectedFund),
+      isExecuted,
       date: new Date().toLocaleDateString()
     });
 
-    // Limpiar campos
     setDescription("");
     setAmount("");
     setIsExecuted(true);
+    setCategory("Efectivo");
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6 border border-gray-100">
-      
-      {/* Botones Gasto / Ingreso */}
       <div className="flex gap-4 mb-4">
         <button
           type="button"
@@ -56,9 +51,7 @@ function TransactionForm({ onAdd, funds }) {
           Ingreso 📈
         </button>
       </div>
-
       <div className="space-y-3">
-        {/* Descripción y Monto */}
         <div className="grid grid-cols-2 gap-3">
           <input
             type="text" placeholder="Concepto (ej. Netflix)" className="border p-2 rounded w-full"
@@ -69,8 +62,6 @@ function TransactionForm({ onAdd, funds }) {
             value={amount} onChange={(e) => setAmount(e.target.value)}
           />
         </div>
-
-        {/* Selección de Fondo (Nómina, Aguinaldo, etc) */}
         <div>
           <label className="text-xs font-bold text-gray-500 mb-1 block">¿De qué fondo?</label>
           <select
@@ -86,20 +77,17 @@ function TransactionForm({ onAdd, funds }) {
             ))}
           </select>
         </div>
-
-        {/* Método de Pago */}
         <select
           className="border p-2 rounded w-full bg-white"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          <option value="Efectivo">💵 Efectivo</option>
-          <option value="Tarjeta BBVA">💳 Tarjeta BBVA</option>
+          <option value="Retiro">💵 Retiro</option>
+          <option value="Tarjeta PlataCard">🟠 Tarjeta PlataCard</option>
           <option value="Tarjeta Nu">🟣 Tarjeta Nu</option>
+          <option value="Tarjeta Vexi">⚪ Tarjeta Vexi</option>
           <option value="Transferencia">📲 Transferencia</option>
         </select>
-
-        {/* Checkbox: ¿Ya se aplicó en el banco? */}
         <div 
           className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${isExecuted ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}
           onClick={() => setIsExecuted(!isExecuted)}
@@ -112,7 +100,7 @@ function TransactionForm({ onAdd, funds }) {
               {isExecuted ? "Movimiento Aplicado" : "Pendiente en Banco"}
             </p>
             <p className="text-xs text-gray-500">
-              {isExecuted ? "Ya se reflejó en mi cuenta" : "Aún no aparece en la app del banco"}
+              {isExecuted ? "Ya hice el movimiento en el banco" : "Aún no realizo el movimiento en el banco"}
             </p>
           </div>
         </div>

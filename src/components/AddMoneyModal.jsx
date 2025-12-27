@@ -22,7 +22,7 @@ function AddMoneyModal({ fund, onClose, onConfirm }) {
         {/* Encabezado */}
         <div className="bg-green-600 p-4 flex justify-between items-center text-white">
           <h3 className="font-bold flex items-center gap-2">
-            <FaMoneyBillWave /> Recargar Fondo
+            <FaMoneyBillWave /> Agregar Fondos
           </h3>
           <button onClick={onClose} className="hover:bg-green-700 p-1 rounded">
             <FaTimes />
@@ -60,7 +60,7 @@ function AddMoneyModal({ fund, onClose, onConfirm }) {
                 type="submit"
                 className="flex-1 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-md transition transform active:scale-95"
               >
-                Confirmar
+                Guardar
               </button>
             </div>
           </form>
