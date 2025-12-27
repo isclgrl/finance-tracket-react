@@ -95,12 +95,71 @@ const useFinance = () => {
     } catch (error) { return { success: false, error: error.message }; }
   };
 
+  const updateTransaction = async (oldTx, newData) => {
+    if (!currentPeriod) return;
+
+    try {
+      const amountChanged = oldTx.amount !== newData.amount;
+      const typeChanged = oldTx.type !== newData.type;
+      const fundChanged = oldTx.fund_id !== newData.fundId;
+
+      if (amountChanged || typeChanged || fundChanged) {
+        const oldFund = funds.find(f => f.id === oldTx.fund_id);
+        if (oldFund) {
+          let restoredBalance = oldFund.balance;
+          if (oldTx.type === 'income') restoredBalance -= oldTx.amount;
+          else restoredBalance += oldTx.amount;
+
+          if (fundChanged) {
+            await supabase.from('funds').update({ balance: restoredBalance }).eq('id', oldFund.id);
+          } else {
+            
+            oldFund.balance = restoredBalance; 
+          }
+        }
+
+        const targetFundId = Number(newData.fundId);
+        
+        const targetFund = funds.find(f => f.id === targetFundId);
+        
+        if (targetFund) {
+          let finalBalance = targetFund.balance;
+          if (newData.type === 'income') finalBalance += Number(newData.amount);
+          else finalBalance -= Number(newData.amount);
+
+          await supabase.from('funds').update({ balance: finalBalance }).eq('id', targetFundId);
+        }
+      }
+
+      const { error } = await supabase
+        .from('transactions')
+        .update({
+          description: newData.description,
+          amount: Number(newData.amount),
+          category: newData.category,
+          type: newData.type,
+          fund_id: Number(newData.fundId),
+          is_executed: newData.isExecuted
+        })
+        .eq('id', oldTx.id);
+
+      if (error) throw error;
+
+      await fetchTransactionsAndFunds(currentPeriod.id);
+      return { success: true };
+
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const logout = () => supabase.auth.signOut();
 
   return {
     session, loading, funds, transactions, currentPeriod,
     startPeriod, closePeriod, createFund, addTransaction, logout,
-    toggleFundStatus
+    toggleFundStatus, updateTransaction
   };
 };
 
