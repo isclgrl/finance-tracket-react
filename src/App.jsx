@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useFinance } from './hooks/useFinance'; // <--- Importamos el cerebro
 import useFinance from './hook/useFinance';
 import Login from './components/Login';
 import TransactionForm from './components/TransactionForm';

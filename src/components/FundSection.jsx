@@ -11,18 +11,16 @@ const FundSection = ({
   setNewFundAmount, 
   onCreateFund, 
   onTopUp,
-  toggleFundStatus // Recibimos la nueva función
+  toggleFundStatus
 }) => {
   
-  // Cálculo basado en la propiedad is_active
   const totalBalance = funds.reduce((acc, fund) => {
-    if (!fund.is_active) return acc; // Si está desactivada en DB, no suma
+    if (!fund.is_active) return acc;
     return acc + fund.balance;
   }, 0);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      {/* TARJETA TOTAL */}
       <div className="bg-slate-500 text-white p-6 rounded-xl shadow-lg md:col-span-3 flex justify-between items-center">
         <div>
           <p className="text-gray-300 text-sm font-medium uppercase">Fondo Total (Activos)</p>
@@ -35,7 +33,6 @@ const FundSection = ({
         )}
       </div>
 
-      {/* FORMULARIO */}
       {showAddFund && currentPeriod && (
         <form onSubmit={onCreateFund} className="bg-white p-4 rounded-lg shadow md:col-span-3 flex gap-3 items-end animate-pulse">
           <input type="text" placeholder="Nombre" className="border p-2 rounded w-full" autoFocus value={newFundName} onChange={e => setNewFundName(e.target.value)}/>
@@ -44,9 +41,7 @@ const FundSection = ({
         </form>
       )}
 
-      {/* LISTA DE BOLSAS */}
       {funds.map(fund => {
-        // Usamos el dato directo de la DB
         const isIncluded = fund.is_active;
 
         return (
@@ -54,7 +49,6 @@ const FundSection = ({
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  {/* Checkbox llama a la función de DB */}
                   <input 
                     type="checkbox" 
                     checked={isIncluded} 

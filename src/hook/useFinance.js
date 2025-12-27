@@ -8,7 +8,6 @@ const useFinance = () => {
   const [currentPeriod, setCurrentPeriod] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- 1. SESIÓN ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -24,7 +23,6 @@ const useFinance = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // --- 2. CARGA DE DATOS ---
   const initData = async (userId) => {
     try {
       const { data: periodData } = await supabase.from('periods').select('*').eq('is_active', true).eq('user_id', userId).maybeSingle();
@@ -35,21 +33,16 @@ const useFinance = () => {
   };
 
   const fetchTransactionsAndFunds = async (periodId) => {
-    // AHORA TRAEMOS LA COLUMNA 'is_active' AUTOMÁTICAMENTE
     const { data: fundsData } = await supabase.from('funds').select('*').order('id', { ascending: true });
     setFunds(fundsData || []);
     const { data: transData } = await supabase.from('transactions').select('*').eq('period_id', periodId).order('date', { ascending: false });
     setTransactions(transData || []);
   };
 
-  // --- 3. ACCIONES ---
-
-  // NUEVA FUNCIÓN: Cambiar estado en la Nube (ON/OFF)
   const toggleFundStatus = async (fundId, currentStatus) => {
     try {
-      const newStatus = !currentStatus; // Invertimos el valor actual
+      const newStatus = !currentStatus;
 
-      // 1. Actualizamos en Supabase
       const { error } = await supabase
         .from('funds')
         .update({ is_active: newStatus })
@@ -57,7 +50,6 @@ const useFinance = () => {
 
       if (error) throw error;
 
-      // 2. Actualizamos en local (para que se vea rápido)
       setFunds(funds.map(f => f.id === fundId ? { ...f, is_active: newStatus } : f));
 
     } catch (error) { alert("Error al actualizar: " + error.message); }
@@ -81,7 +73,6 @@ const useFinance = () => {
   const createFund = async (name, initialAmount) => {
     if (!currentPeriod) return;
     try {
-      // Por defecto nacen activas (is_active: true es default en DB)
       const { data, error } = await supabase.from('funds').insert([{ name, balance: Number(initialAmount) || 0, user_id: session.user.id }]).select();
       if (error) throw error; setFunds([...funds, data[0]]); return { success: true };
     } catch (error) { return { success: false, error: error.message }; }
@@ -109,7 +100,7 @@ const useFinance = () => {
   return {
     session, loading, funds, transactions, currentPeriod,
     startPeriod, closePeriod, createFund, addTransaction, logout,
-    toggleFundStatus // Exportamos la nueva función
+    toggleFundStatus
   };
 };
 

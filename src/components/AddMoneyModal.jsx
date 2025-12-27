@@ -8,7 +8,6 @@ function AddMoneyModal({ fund, onClose, onConfirm }) {
     e.preventDefault();
     if (!amount || amount <= 0) return;
     
-    // Enviamos el monto al padre
     onConfirm(Number(amount));
     setAmount("");
   };
@@ -19,7 +18,6 @@ function AddMoneyModal({ fund, onClose, onConfirm }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
         
-        {/* Encabezado */}
         <div className="bg-green-600 p-4 flex justify-between items-center text-white">
           <h3 className="font-bold flex items-center gap-2">
             <FaMoneyBillWave /> Agregar Fondos
@@ -29,7 +27,6 @@ function AddMoneyModal({ fund, onClose, onConfirm }) {
           </button>
         </div>
 
-        {/* Cuerpo */}
         <div className="p-6">
           <p className="text-gray-500 text-sm mb-1">Vas a agregar dinero a:</p>
           <p className="text-xl font-bold text-slate-800 mb-4">{fund.name}</p>
