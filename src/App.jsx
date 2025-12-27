@@ -17,10 +17,10 @@ const App = () => {
   const { 
     session, loading, funds, transactions, currentPeriod, 
     startPeriod, closePeriod, createFund, addTransaction, logout,
-    excludedFundIds, toggleFundInclusion
+    toggleFundStatus
   } = useFinance();
 
-  const activeFundsForSpending = funds.filter(fund => !excludedFundIds.includes(fund.id));
+  const activeFundsForSpending = funds.filter(fund => fund.is_active);
 
   const handleStart = async () => {
     const name = window.prompt("Nombre del periodo:", "Ej. Marzo 2025");
@@ -84,8 +84,7 @@ const App = () => {
 
         <FundSection 
           funds={funds}
-          excludedFundIds={excludedFundIds}
-          toggleFundInclusion={toggleFundInclusion}
+          toggleFundStatus={toggleFundStatus}
           currentPeriod={currentPeriod}
           showAddFund={showAddFund}
           setShowAddFund={setShowAddFund}
