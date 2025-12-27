@@ -6,17 +6,19 @@ import AddMoneyModal from './components/AddMoneyModal';
 import Header from './components/Header';
 import FundSection from './components/FundSection';
 import TransactionList from './components/TransactionList';
+import EditTransactionModal from './components/EditTransactionModal';
 
 const App = () => {
   const [showAddFund, setShowAddFund] = useState(false);
   const [newFundName, setNewFundName] = useState("");
   const [newFundAmount, setNewFundAmount] = useState("");
-  const [selectedFundToTopUp, setSelectedFundToTopUp] = useState(null); 
+  const [selectedFundToTopUp, setSelectedFundToTopUp] = useState(null);
+  const [editingTx, setEditingTx] = useState(null);
 
   const { 
     session, loading, funds, transactions, currentPeriod, 
     startPeriod, closePeriod, createFund, addTransaction, logout,
-    toggleFundStatus
+    toggleFundStatus, updateTransaction
   } = useFinance();
 
   const activeFundsForSpending = funds.filter(fund => fund.is_active);
@@ -59,12 +61,33 @@ const App = () => {
     }
   };
 
+  const handleEditSave = async (newData) => {
+    if (!editingTx) return;
+    
+    const res = await updateTransaction(editingTx, newData);
+    
+    if (res.success) {
+      setEditingTx(null);
+    } else {
+      alert("Error al editar: " + res.error);
+    }
+  };
+
   if (loading) return <div>Cargando...</div>;
   if (!session) return <Login />;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-10 font-sans relative">
       
+      {editingTx && (
+        <EditTransactionModal 
+          transaction={editingTx}
+          funds={funds}
+          onClose={() => setEditingTx(null)}
+          onSave={handleEditSave}
+        />
+      )}
+
       {selectedFundToTopUp && (
         <AddMoneyModal 
           fund={selectedFundToTopUp} 
@@ -112,7 +135,12 @@ const App = () => {
             )}
           </div>
 
-          <TransactionList transactions={transactions} funds={funds} currentPeriod={currentPeriod} />
+          <TransactionList
+            transactions={transactions}
+            funds={funds}
+            currentPeriod={currentPeriod}
+            onEdit={setEditingTx}
+          />
         </div>
       </div>
     </div>
